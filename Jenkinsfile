@@ -4,7 +4,7 @@ pipeline {
         jdk 'Java17'
         maven 'Maven3'
     }
-    enviroment{
+    environment{
        APP_NAME = "java-sample-ci"
        RELEASE = "1.0.0"
        DOCKER_USER = "sarairavani" 
