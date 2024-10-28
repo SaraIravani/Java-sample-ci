@@ -10,7 +10,8 @@ pipeline {
        DOCKER_USER = "sarairavani" 
        DOCKER_PASS = 'dockerhub' 
        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
-       IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"    
+       IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}"
+       JENKINS_API_TOKEN = credentials("JENKINS_API_TOKEN")	    
     }
     stages{
         stage("Cleanup Workspace"){
@@ -80,6 +81,13 @@ pipeline {
                     sh "docker rmi ${IMAGE_NAME}:latest"
                }
           }
+       }
+       stage("Trigger CD Pipeline") {
+            steps {
+                script {
+                    sh "curl -v -k --user sara:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-35-183-31-29.ca-central-1.compute.amazonaws.com:8080/job/gitops-java-sample-cd/buildWithParameters?token=gitops-token'"
+                }
+            }
        }	    
     }
 }
